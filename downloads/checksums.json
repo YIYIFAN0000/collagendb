@@ -1,0 +1,17 @@
+{
+  "snapshot": "2026-10-31",
+  "files": {
+    "hyp_evidence.csv.gz": {
+      "sha256": "4b7c779b805c5e70f22d9e9de493c5691d0bb9e0ffdba3c368de01ff15fd54ed",
+      "bytes": 832616
+    },
+    "hyp_reference_sequences.fasta.gz": {
+      "sha256": "2779fbd5283325281c4601b1575602632e371b3a23ec1dadab63bd697bb38b2c",
+      "bytes": 53265
+    },
+    "train.fasta.gz": {
+      "sha256": "6ce7ed85441704361264376908cb4fd32d02b4dfe9ec7112fe0bee383ee6e33e",
+      "bytes": 2169587
+    }
+  }
+}
