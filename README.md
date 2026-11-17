@@ -2,7 +2,7 @@
 
 胶原编码序列与羟脯氨酸（Hyp）来源证据静态图谱。
 
-目标域名：<https://collagendb.com>。项目源于 `Colformer_Atlas_Portable_v3.zip`，网站与数据文件保持原样。
+正式网站：<https://collagendb.com>，也可使用 <https://www.collagendb.com>。项目源于 `Colformer_Atlas_Portable_v3.zip`，网站与数据文件保持原样。
 
 ## 内容
 
@@ -22,7 +22,9 @@ python open_atlas.py
 
 ## 阿里云服务器部署
 
-正式站点计划运行在已有的阿里云香港 ECS `8.218.195.119`，GitHub 保存网站源码。
+正式站点运行在已有的阿里云香港 ECS `8.218.195.119`，GitHub 保存网站源码。两个域名均已启用 HTTPS，HTTP 自动跳转至 HTTPS。
+
+证书由 Let's Encrypt 签发，`collagendb-certbot-renew.timer` 每天检查两次续期；续期模拟测试已通过。GitHub 源码更新与服务器发布是独立操作，推送到 GitHub 不会自动更新阿里云站点。
 
 阿里云 DNS 中，`@` 和 `www` 均使用 A 记录指向 `8.218.195.119`。服务器需要允许网站的 TCP 80、443 端口。
 
