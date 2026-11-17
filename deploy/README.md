@@ -33,3 +33,29 @@ curl -I -H 'Host: collagendb.com' -H 'Accept-Encoding: gzip' http://127.0.0.1/da
 ```
 
 发布版本位于 `/www/wwwroot/collagendb-releases/`；部署状态记录于 `/var/lib/collagendb-deploy/state.json`。脚本可重复运行，但只接受指向同一个已验证版本的站点链接和完全相同的受管配置。中断留下的暂存目录会保留供检查，不会递归删除。
+
+## 启用 HTTPS 和自动续期
+
+先确认两个域名的 HTTP 已能正常访问，ECS 安全组已开放 TCP `80`、`443`。在同一个 **root Shell** 运行：
+
+```bash
+python3 -c "import urllib.request; exec(compile(urllib.request.urlopen('https://raw.githubusercontent.com/YIYIFAN0000/collagendb/main/deploy/enable_https.py', timeout=60).read(), 'enable_https.py', 'exec'))"
+```
+
+命令会启动交互式 Certbot：请自行输入联系邮箱，阅读并决定是否接受证书机构的服务条款。脚本不预填邮箱，也不自动同意条款。请让终端保持打开，直到证书申请和续期测试结束。
+
+脚本通过系统现有软件源并行安装 Python 3.11，在带专用标记的 `/opt/collagendb-certbot` 中安装官方 PyPI 的 Certbot 和 Nginx 插件。系统默认 Python 不变。修改前会将本站 Nginx 配置备份到仅 root 可进入的 `/var/lib/collagendb-deploy/https-backups/`，不输出私钥。
+
+申请成功后，脚本检查两个域名的证书、HTTPS 页面和原始首页 SHA256，再测试续期。全部通过后启用 `collagendb-certbot-renew.timer`，每天检查两次，并附加随机延迟。续期仅针对 `collagendb.com` 这张同时覆盖两个域名的证书；Nginx 插件负责加载新证书。
+
+如果续期测试失败，已经生效的证书会保留，脚本会明确提示自动续期尚未完成。请保留终端末尾错误用于排查，修复后重跑 HTTPS 命令。不要自行删除证书或覆盖整个 Nginx 配置目录。
+
+成功后的检查：
+
+```bash
+curl -I https://collagendb.com
+curl -I https://www.collagendb.com
+systemctl list-timers collagendb-certbot-renew.timer
+```
+
+实现依据：[阿里云 Linux 3 并行安装新版 Python](https://help.aliyun.com/en/alinux/support/install-a-newer-python-3-on-alibaba-cloud-linux-3)、[Certbot 官方独立虚拟环境与 Nginx 指引](https://certbot.eff.org/instructions?os=pip&ws=nginx)、[Certbot 续期文档](https://eff-certbot.readthedocs.io/en/stable/using.html#renewing-certificates)。
